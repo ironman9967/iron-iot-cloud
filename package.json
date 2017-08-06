@@ -5,7 +5,10 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
+		"build": "npm run babel",
 		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "nvm run default dist/index.js",
+
 		"babel": "babel src --out-dir dist"
 	},
 	"repository": {
