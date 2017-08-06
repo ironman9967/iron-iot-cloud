@@ -49,7 +49,5 @@ rm -rf temp
 echo 'removing node_modules'
 rm -rf node_modules
 
-ls
-
-# echo 'npm install production deps'
-# npm i --production
+echo 'npm install production deps'
+npm i --production
