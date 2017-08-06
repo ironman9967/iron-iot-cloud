@@ -11,7 +11,8 @@ server.connection({ port })
 
 server.register(Inert)
 	.then(() => server.register({
-		register: Good, {
+		register: Good,
+		options: {
 			reporters: {
 				consoleReporter: [{
 					module: 'good-squeeze',

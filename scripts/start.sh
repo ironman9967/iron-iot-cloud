@@ -6,13 +6,22 @@ ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 git clone git@github.com:ironman9967/iron-iot-cloud.git temp
 
-ls
+chmod +x ./temp/scripts/start-nvm.sh
 
-#cp -r ./temp/scripts ./scripts
+source ./temp/scripts/start-nvm.sh
 
-#rm -rf temp
+nvm install stable
 
-#ls
-#./scripts/start-nvm.sh
+nvm alias default stable
 
-#nvm --version
+nvm use stable
+
+cd temp
+
+npm i
+
+npm run build
+
+# cp -r ./temp/scripts ./
+
+rm -rf temp
