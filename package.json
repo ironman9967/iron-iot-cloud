@@ -5,10 +5,9 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"build": "npm run babel",
+		"build": "npm run babel && cp -r ./scripts ./dist && chmod +x dist/scripts/start.sh",
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "nvm run default dist/index.js",
-
+		"start": "npm run build && ./dist/scripts/start.sh",
 		"babel": "babel src --out-dir dist"
 	},
 	"repository": {
@@ -22,7 +21,12 @@
 		"babel-cli": "^6.24.1",
 		"babel-plugin-transform-object-rest-spread": "^6.23.0",
 		"babel-preset-env": "^1.6.0",
+		"watch": "^1.0.2"
+	},
+	"dependencies": {
 		"good": "^7.2.0",
+		"good-console": "^6.4.0",
+		"good-squeeze": "^5.0.2",
 		"hapi": "^16.5.2",
 		"inert": "^4.2.1"
 	},

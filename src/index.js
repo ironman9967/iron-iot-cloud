@@ -28,6 +28,17 @@ server.register(Inert)
 		}
 	}))
 	.then(() => {
+		server.route({
+			method: 'GET',
+			path: '/api/hub/versions/{type?}',
+			handler: (req, reply) => {
+				console.log(req.params)
+				reply()
+			}
+		})
+		return server
+	})
+	.then(() => {
 		server.start(err => {
 			if (err) {
 				throw err
