@@ -3,7 +3,7 @@
 echo 'removing temp'
 rm -rf temp
 
-echo 'making temp directory'
+echo 'creating temp'
 mkdir temp
 
 echo 'downloading latest cloud release'
