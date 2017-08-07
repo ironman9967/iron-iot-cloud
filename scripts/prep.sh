@@ -3,6 +3,9 @@
 echo 'removing temp'
 rm -rf temp
 
+echo 'making temp directory'
+mkdir temp
+
 echo 'downloading latest cloud release'
 wget https://github.com/ironman9967/iron-iot-cloud/archive/latest.tar.gz
 
