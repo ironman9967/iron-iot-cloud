@@ -34,8 +34,8 @@ cp ./temp/package-lock.json ./app
 echo 'removing temp'
 rm -rf temp
 
-# echo 'removing node_modules'
-# rm -rf node_modules
+echo 'navigating to app'
+cd app
 
-# echo 'npm install production deps'
-# npm i --production
+echo 'npm install production deps'
+npm i --production
