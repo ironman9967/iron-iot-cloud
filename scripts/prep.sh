@@ -18,21 +18,21 @@ cd temp
 echo 'npm install all deps'
 npm i
 
-# echo 'building app'
-# npm run build
+echo 'building app'
+npm run build
 
-# echo 'navigate up from temp'
-# cd ..
+echo 'navigate up from temp'
+cd ..
 
-# echo 'copying dist'
-# cp -r ./temp/dist ./
-# echo 'copying package.json'
-# cp ./temp/package.json ./
-# echo 'copying package-lock.json'
-# cp ./temp/package-lock.json ./
+echo 'copying dist'
+cp -r ./temp/dist ./app
+echo 'copying package.json'
+cp ./temp/package.json ./app
+echo 'copying package-lock.json'
+cp ./temp/package-lock.json ./app
 
-# echo 'removing temp'
-# rm -rf temp
+echo 'removing temp'
+rm -rf temp
 
 # echo 'removing node_modules'
 # rm -rf node_modules
