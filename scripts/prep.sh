@@ -3,11 +3,14 @@
 echo 'removing temp'
 rm -rf temp
 
-echo 'trusting github.com'
-ssh-keyscan github.com >> ~/.ssh/known_hosts
+echo 'downloading latest cloud release'
+wget https://github.com/ironman9967/iron-iot-cloud/archive/latest.tar.gz
 
-echo 'cloning iron-iot-cloud'
-git clone git@github.com:ironman9967/iron-iot-cloud.git temp
+echo 'extracting release'
+tar xvzf latest.tar.gz --transform 's/iron-iot-common-latest//'
+
+echo 'removing release tar'
+rm latest.tar.gz
 
 echo 'starting nvm'
 source ./common/scripts/start-nvm.sh
