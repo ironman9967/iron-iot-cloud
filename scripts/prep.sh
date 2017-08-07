@@ -13,7 +13,7 @@ echo 'cloning iron-iot-cloud'
 git clone git@github.com:ironman9967/iron-iot-cloud.git temp
 
 echo 'starting nvm'
-source ../common/scripts/start-nvm.sh
+source ./common/scripts/start-nvm.sh
 
 echo 'navigating to temp'
 cd temp
