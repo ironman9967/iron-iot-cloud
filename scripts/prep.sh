@@ -13,16 +13,7 @@ echo 'cloning iron-iot-cloud'
 git clone git@github.com:ironman9967/iron-iot-cloud.git temp
 
 echo 'starting nvm'
-source ./temp/scripts/start-nvm.sh
-
-echo 'installing node stable'
-nvm install stable
-
-echo 'setting nvm default to stable'
-nvm alias default stable
-
-echo 'setting nvm to use stable'
-nvm use stable
+source ../common/scripts/start-nvm.sh
 
 echo 'navigating to temp'
 cd temp
