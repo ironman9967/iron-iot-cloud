@@ -98,5 +98,7 @@ server.register(Inert)
 				throw err
 			}
 			server.log(`server up on ${port}`)
+			
+			console.log('asdf')
 		})
 	})
