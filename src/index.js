@@ -15,13 +15,12 @@ const devices = [{
 }]
 
 const apiCodeVer = 'api/code/versions'
-const apiDmi = d => `device/${d.model}/${d.iteration}`
+const apiDmi = d => `devices/${d.model}/${d.iteration}`
 
-const getDeviceCodeVersions = (model, iteration, codeType) => {
+const getDeviceCodeVersions = (model, iteration) => {
 	const d = devices.find(d =>
 		d.model == model
-		&& d.iteration == iteration
-		&& d[codeType])
+		&& d.iteration == iteration)
 	if (d) {
 		return {
 			model: d.model,
@@ -43,18 +42,18 @@ const getDeviceCodeVersionUrls = d => {
 	return res
 }
 
-const getCodeVersions = ([ type, model, iteration, codeType ]) => {
+const getCodeVersions = ([ type, model, iteration ]) => {
 	switch (type) {
 		case 'node':
 			return { node: process.version }
-		case 'device':
+		case 'devices':
 			return model
-				? getDeviceCodeVersions(model, iteration, codeType)
-				: devices.reduce((urls, d) =>
-					urls.concat(getDeviceCodeVersionUrls(d)), [])
+				? getDeviceCodeVersions(model, iteration)
+				: devices.map(d => `/${apiCodeVer}/${apiDmi(d)}`)
 		default:
-			return [ `/${apiCodeVer}/node`].concat(devices.reduce((urls, d) =>
-				urls.concat(getDeviceCodeVersionUrls(d)), []))
+			return devices.map(d => `/${apiCodeVer}/${apiDmi(d)}`).concat([
+				`/${apiCodeVer}/node`
+			])
 	}
 }
 
