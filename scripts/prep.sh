@@ -25,17 +25,14 @@ echo 'navigate up from temp'
 cd ..
 
 echo 'copying dist'
-cp -r ./temp/dist ./app
+cp -r ./temp/dist ./
 echo 'copying package.json'
-cp ./temp/package.json ./app
+cp ./temp/package.json ./
 echo 'copying package-lock.json'
-cp ./temp/package-lock.json ./app
+cp ./temp/package-lock.json ./
 
 echo 'removing temp'
 rm -rf temp
-
-echo 'navigating to app'
-cd app
 
 echo 'npm install production deps'
 npm i --production
