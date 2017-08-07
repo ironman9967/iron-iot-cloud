@@ -16,7 +16,7 @@ echo 'removing release tar'
 rm latest.tar.gz
 
 echo 'starting nvm'
-source ./common/scripts/start-nvm.sh
+source ./common/scripts/start-nvm.sh cloud
 
 echo 'installing node stable'
 nvm install stable
