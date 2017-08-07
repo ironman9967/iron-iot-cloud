@@ -3,6 +3,61 @@ import { Server } from 'hapi'
 import Good from 'good'
 import Inert from 'inert'
 
+const devices = [{
+	model: 'phub',
+	iteration: 1,
+	app: { version: "v0.0.1" }
+}, {
+	model: 'mose',
+	iteration: 1,
+	firmware: { version: 1 },
+	app: { version: "v0.0.1" }
+}]
+
+const apiCodeVer = 'api/code/versions'
+const apiDmi = d => `device/${d.model}/${d.iteration}`
+
+const getDeviceCodeVersions = (model, iteration, codeType) => {
+	const d = devices.find(d =>
+		d.model == model
+		&& d.iteration == iteration
+		&& d[codeType])
+	if (d) {
+		return {
+			model: d.model,
+			iteration: d.iteration,
+			firmware: d.firmware ? { version: d.firmware.version } : void 0,
+			app: { version: d.app.version }
+		}
+	}
+	else {
+		return {}
+	}
+}
+
+const getDeviceCodeVersionUrls = d => {
+	const res = [ `/${apiCodeVer}/${apiDmi(d)}/app` ]
+	if (d.firmware) {
+		res.push(`/${apiCodeVer}/${apiDmi(d)}/firmware`)
+	}
+	return res
+}
+
+const getCodeVersions = ([ type, model, iteration, codeType ]) => {
+	switch (type) {
+		case 'node':
+			return { node: process.version }
+		case 'device':
+			return model
+				? getDeviceCodeVersions(model, iteration, codeType)
+				: devices.reduce((urls, d) =>
+					urls.concat(getDeviceCodeVersionUrls(d)), [])
+		default:
+			return [ `/${apiCodeVer}/node`].concat(devices.reduce((urls, d) =>
+				urls.concat(getDeviceCodeVersionUrls(d)), []))
+	}
+}
+
 const server = new Server()
 
 const port = 9967
@@ -30,11 +85,11 @@ server.register(Inert)
 	.then(() => {
 		server.route({
 			method: 'GET',
-			path: '/api/hub/versions/{type?}',
-			handler: (req, reply) => {
-				console.log(req.params)
-				reply()
-			}
+			path: `/${apiCodeVer}/{p*}`,
+			handler: ({ params: { p } }, reply) =>
+				reply(getCodeVersions(p
+					? p.split('/').filter(s => s.length > 0)
+					: []))
 		})
 		return server
 	})
