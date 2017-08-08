@@ -7,7 +7,7 @@
 	"scripts": {
 		"build": "npm run dl-common && npm run babel",
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "chmod +x ./scripts/prep.sh && ./scripts/prep.sh && npm run build && chmod +x ./common/scripts/start.sh && ./common/scripts/start.sh",
+		"start": "npm run build && chmod +x ./common/scripts/start.sh && ./common/scripts/start.sh",
 		"babel": "babel src --out-dir dist",
 		"dl-common": "wget https://raw.githubusercontent.com/ironman9967/iron-iot-common/master/scripts/prep.sh && chmod +x prep.sh && ./prep.sh && rm -rf prep.sh",
 		"bump": "npm version $1",
