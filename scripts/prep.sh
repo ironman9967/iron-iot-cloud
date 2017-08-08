@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./common/scripts/start-nvm.sh
+
 echo 'installing node stable'
 nvm install stable
 
