@@ -21,6 +21,10 @@
 	"keywords": [],
 	"author": "Tyson Hester",
 	"license": "ISC",
+    "bugs": {
+      "url": "https://github.com/ironman9967/iron-iot-cloud/issues"
+    },
+    "homepage": "https://github.com/ironman9967/iron-iot-cloud#readme",
 	"devDependencies": {
 		"babel-cli": "^6.24.1",
 		"babel-plugin-transform-object-rest-spread": "^6.23.0",
