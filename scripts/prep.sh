@@ -6,17 +6,27 @@ rm -rf temp
 echo 'creating temp'
 mkdir temp
 
-echo 'downloading latest cloud release'
-wget https://github.com/ironman9967/iron-iot-cloud/archive/latest.tar.gz
+echo 'requesting latest release uri'
+uri=`curl \
+	-H "Accept: application/vnd.github.v3+json" \
+	https://api.github.com/repos/ironman9967/iron-iot-cloud/releases/latest \
+| grep -E '"tarball_url": ".*",?$' \
+| grep -o 'http[^",]*'`
+
+version=`echo $uri | grep -o '[^/]*$'`
+
+echo "downloading cloud release $version"
+rm -rf latest.tar.gz
+`wget -O latest.tar.gz $uri`
 
 echo 'extracting release'
-tar xvzf latest.tar.gz --transform 's/iron-iot-cloud-latest/temp/'
+tar xvzf latest.tar.gz --transform 's:[^/]*:temp:'
 
 echo 'removing release tar'
 rm latest.tar.gz
 
 echo 'starting nvm'
-source ./common/scripts/start-nvm.sh cloud
+source ./common/scripts/start-nvm.sh
 
 echo 'installing node stable'
 nvm install stable
