@@ -1,18 +1,29 @@
 
-export const createVersionsApi = devices => {
-	const apiCodeVer = 'api/bin/versions'
-	const apiDmi = d => `devices/${d.model}/${d.iteration}`
+import { getTarFilePath } from '../../../bin-downloader'
 
-	const getDeviceCodeVersions = (model, iteration) => {
+export const createBinVersionsApi = (staticFilePublicUrl, devices) => {
+	const apiRoute = 'api/bin/versions'
+
+	const getDeviceUrl = d => `/${apiRoute}/devices/${d.model}/${d.iteration}`
+	const getDeviceUrls = () => devices.map(getDeviceUrl)
+	const getDeviceFirmwareTarUrl = (d, type) =>
+		`${staticFilePublicUrl}/${getTarFilePath(d, type)}`
+
+	const getDeviceVersions = (model, iteration) => {
 		const d = devices.find(d =>
-			d.model == model
-			&& d.iteration == iteration)
+			d.model == model && d.iteration == iteration)
 		if (d) {
 			return {
 				model: d.model,
 				iteration: d.iteration,
-				firmware: d.firmware ? { version: d.firmware.version } : void 0,
-				app: { version: d.app.version }
+				firmware: d.firmware ? {
+					version: d.firmware.version,
+					tar: getDeviceFirmwareTarUrl(d, 'firmware')
+				} : void 0,
+				app: {
+					version: d.app.version,
+					tar: getDeviceFirmwareTarUrl(d, 'app')
+				}
 			}
 		}
 		else {
@@ -20,27 +31,25 @@ export const createVersionsApi = devices => {
 		}
 	}
 
-	const getCodeVersions = ([ type, model, iteration ]) => {
+	const getResponse = ([ type, model, iteration ]) => {
 		switch (type) {
 			case 'node':
 				return { node: process.version }
 			case 'devices':
 				return model
-					? getDeviceCodeVersions(model, iteration)
-					: devices.map(d => `/${apiCodeVer}/${apiDmi(d)}`)
+					? getDeviceVersions(model, iteration)
+					: getDeviceUrls()
 			default:
-				return devices.map(d => `/${apiCodeVer}/${apiDmi(d)}`).concat([
-					`/${apiCodeVer}/node`
-				])
+				return getDeviceUrls().concat([ `/${apiRoute}/node` ])
 		}
 	}
 
 	return {
-		createVersionsRoute: () => ({
+		createRoute: () => ({
 			method: 'GET',
-			path: `/${apiCodeVer}/{p*}`,
+			path: `/${apiRoute}/{p*}`,
 			handler: ({ params: { p } }, reply) =>
-				reply(getCodeVersions(p
+				reply(getResponse(p
 					? p.split('/').filter(s => s.length > 0)
 					: []))
 		})
