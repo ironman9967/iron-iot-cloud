@@ -14,7 +14,7 @@ nvm use stable
 echo "getting app for $model"
 wget "https://raw.githubusercontent.com/ironman9967/iron-iot-cloud/master/scripts/get-app.sh"
 chmod +x get-app.sh
-./get-app.sh
+./get-app.sh cloud
 rm -rf get-app.sh
 
 source ./common/scripts/build-app.sh $version cloud
