@@ -17,14 +17,14 @@ export const getBuiltFolderPath = (d, type) =>
 export const getBuiltFilePath = (d, type) =>
 	`${getBuiltTarFolderPath(d, type)}/${getTarSuffix(e, type)}`
 
-export const getPrebuildFilePath = () => `bin/devices/prebuilds`
+export const getPrebuildFolder = () => `bin/devices/prebuilds`
 
 export const getPrebuildFilePath = (d, type) =>
 	`bin/devices/prebuilds/prebuild_${getTarSuffix(e, type)}`
 
 export const downloadDevicePrebuild = d => {
 	const cwd = path.join(path.dirname(__dirname),
-		`./http-server/static-files/public/${getPrebuildFilePath()}`)
+		`./http-server/static-files/public/${getPrebuildFolder()}`)
 	ensureDirSync(cwd)
 	return new Promise((resolve, reject) => {
 		exec([
