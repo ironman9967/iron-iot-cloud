@@ -1,7 +1,19 @@
 
 import filter from 'lodash/fp/filter'
+import rp from 'request-promise'
 
-import { getBuiltFilePath } from '../../../bin-downloader'
+import {
+	getBuiltFilePath,
+	getModelItrStr
+} from '../../../bin-downloader'
+
+export const getLatestAppVersion = d =>
+	rp({
+		uri: 'https://api.github.com/repos/ironman9967/' +
+			`iron-iot-${getModelItrStr(d)}/releases/latest`,
+	    headers: { 'User-Agent': 'iron-iot' },
+		json: true
+	}).then(({ tag_name: version }) => version)
 
 export const createBinVersionsApi = ({
 	deviceUpsert,
@@ -15,16 +27,16 @@ export const createBinVersionsApi = ({
 	}) => d.model != m && d.iteration != i)
 
 	deviceUpsert.subscribe(d => {
-		removeDevice(d)
-		getLatestAppVersion(d)   // <<------------ not built yet
+		getLatestAppVersion(d)
 			.then(version => {
 				if (!d.app || d.app.version != version) {
-					d.app = Object.create(d.app, {
-						version,
-						tar: getBuiltFilePath(d, 'app')
-					})
+					d.app = {
+						version
+					}
+					d.app.tar = getBuiltFilePath(d, 'app')
 					prebuildNeeded.next(d)
 				}
+				removeDevice(d)
 				devices.push(d)
 			})
 	})

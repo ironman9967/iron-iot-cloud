@@ -46,6 +46,10 @@ const getLocalVersion = (d, prebuild = false) => {
 			staticFilesPublicUrl,
 			getBuiltFolder(d, 'app')
 		)
+
+	console.log(folder)
+	process.exit()
+
 	return fsStat(folder)
 		.then(() => fsReaddir(folder))
 		.catch(err => {
@@ -62,6 +66,31 @@ const getLocalVersion = (d, prebuild = false) => {
 
 export const getLocalPrebuildVersion = d => getLocalVersion(d, true)
 export const getLocalBuiltVersion = d => getLocalVersion(d)
+
+export const checkLocalVersion = (d, getLocalVersion) =>
+	getLocalVersion(d)//.then(local => local != d.version)
+		.then(local => {
+			console.log(local)
+			console.log(d)
+			console.log(getLocalVersion.toString())
+			process.exit()
+		})
+
+export const syncDevicePrebuild = d =>
+	checkLocalVersion(d, getLocalBuiltVersion)
+		// .then(buildNeeded => buildNeeded
+		// 	? checkLocalVersion(d, getLocalPrebuildVersion)
+		// 		.then(prebuidNeeded => ({
+		// 			buildNeeded,
+		// 			prebuidNeeded
+		// 		}))
+		// 	: {
+		// 		buildNeeded: false,
+		// 		prebuidNeeded: false
+		// 	})
+		// .then(({ buildNeeded, prebuidNeeded }) => prebuidNeeded
+		// 	? downloadDevicePrebuild(d).then(() => { buildNeeded })
+		// 	: { buildNeeded })
 
 export const downloadDevicePrebuild = ({
 	model,
@@ -95,9 +124,15 @@ export const downloadDevicePrebuild = ({
 }
 
 export const createBinDownloader = ({
-	prebuildNeeded
+	prebuildNeeded,
+	buildNeeded
 }) => {
 	ensureDirSync(prebuildFolder)
-	prebuildNeeded.subscribe(downloadDevicePrebuild)
+	prebuildNeeded.subscribe(d => syncDevicePrebuild(d)
+		.then(({ buildNeeded }) => buildNeeded
+			? buildNeeded.next(d)
+			: void 0
+		)
+	)
 	return Promise.resolve()
 }
