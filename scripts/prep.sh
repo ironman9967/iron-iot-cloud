@@ -12,7 +12,7 @@ echo 'setting nvm to use stable'
 nvm use stable
 
 echo "getting app for $model"
-wget "https://raw.githubusercontent.com/ironman9967/iron-iot-common/master/scripts/get-app.sh"
+wget "https://raw.githubusercontent.com/ironman9967/iron-iot-cloud/master/scripts/get-app.sh"
 chmod +x get-app.sh
 ./get-app.sh
 rm -rf get-app.sh
