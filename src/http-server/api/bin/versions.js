@@ -1,13 +1,37 @@
 
-import { getTarFilePath } from '../../../bin-downloader'
+import filter from 'lodash/fp/filter'
 
-export const createBinVersionsApi = (staticFilePublicUrl, devices) => {
+import { getBuiltFilePath } from '../../../bin-downloader'
+
+export const createBinVersionsApi = ({
+	deviceUpsert,
+	prebuildNeeded
+}) => {
+	const devices = []
+
+	const removeDevice = d => filter(({
+		model: m,
+		iteration: i
+	}) => d.model != m && d.iteration != i)
+
+	deviceUpsert.subscribe(d => {
+		removeDevice(d)
+		getLatestAppVersion(d)   // <<------------ not built yet
+			.then(version => {
+				if (!d.app || d.app.version != version) {
+					d.app = Object.create(d.app, {
+						version,
+						tar: getBuiltFilePath(d, 'app')
+					})
+					prebuildNeeded.next(d)
+				}
+				devices.push(d)
+			})
+	})
+
 	const apiRoute = 'api/bin/versions'
 
-	const getDeviceUrl = d => `/${apiRoute}/devices/${d.model}/${d.iteration}`
-	const getDeviceUrls = () => devices.map(getDeviceUrl)
-	const getDeviceFirmwareTarUrl = (d, type) =>
-		`${staticFilePublicUrl}/${getTarFilePath(d, type)}`
+	const getDeviceUrl = d => `/${apiRoute}/${d.model}/${d.iteration}`
 
 	const getDeviceVersions = (model, iteration) => {
 		const d = devices.find(d =>
@@ -16,13 +40,19 @@ export const createBinVersionsApi = (staticFilePublicUrl, devices) => {
 			return {
 				model: d.model,
 				iteration: d.iteration,
-				firmware: d.firmware ? {
-					version: d.firmware.version,
-					tar: getDeviceFirmwareTarUrl(d, 'firmware')
-				} : void 0,
+				interpreter: {
+					type: d.interpreter.type,
+					version: d.interpreter.version,
+					tar: [
+						//any interpreter that does NOT need to be hosted
+						'node'
+					].indexOf(d.interpreter.type) < 0
+						? getBuiltFilePath(d, 'interpreter')
+						: void 0
+				},
 				app: {
 					version: d.app.version,
-					tar: getDeviceFirmwareTarUrl(d, 'app')
+					tar: getBuiltFilePath(d, 'app')
 				}
 			}
 		}
@@ -31,27 +61,12 @@ export const createBinVersionsApi = (staticFilePublicUrl, devices) => {
 		}
 	}
 
-	const getResponse = ([ type, model, iteration ]) => {
-		switch (type) {
-			case 'node':
-				return { node: process.version }
-			case 'devices':
-				return model
-					? getDeviceVersions(model, iteration)
-					: getDeviceUrls()
-			default:
-				return getDeviceUrls().concat([ `/${apiRoute}/node` ])
-		}
-	}
-
 	return {
 		createRoute: () => ({
 			method: 'GET',
-			path: `/${apiRoute}/{p*}`,
-			handler: ({ params: { p } }, reply) =>
-				reply(getResponse(p
-					? p.split('/').filter(s => s.length > 0)
-					: []))
+			path: `/${apiRoute}/{model}/{iteration?}`,
+			handler: ({ params: { model, iteration } }, reply) =>
+				reply(getDeviceVersions(model, iteration))
 		})
 	}
 }

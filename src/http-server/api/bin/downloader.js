@@ -3,29 +3,24 @@ export const createBinDownloaderApi = () => {
 	const apiRoute = 'api/bin/downloader'
 
 	return {
-		createRoute: () => ({
+		createRoute: prebuildNeeded => ({
 			method: 'POST',
 			path: `/${apiRoute}/prebuild`,
 			handler: ({
 				payload: {
-					ref,
-					ref_type,
-					repository: { name: repo },
-					sender: {
-						login: senderLogin,
-						id: senderId
-					}
+					ref: version,
+					repository: { name: repo }
 				}
 			}, reply) => {
 				reply()
 				if (ref_type == 'tag' && ref.indexOf('v') == 0)  {
-					console.log(repo.split('-'))
+					const [ ,, model, iteration ] = repo.split('-')
+					prebuildNeeded.next({
+						model,
+						iteration,
+						version
+					})
 				}
-				console.log(ref)
-				console.log(ref_type)
-				console.log(repo)
-				console.log(senderLogin)
-				console.log(senderId)
 			}
 		})
 	}

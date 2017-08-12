@@ -2,6 +2,7 @@
 
 model=$1
 iteration=$2
+version=$3
 mi=$model
 if [ "$iteration" != "" ]
 then
@@ -9,19 +10,20 @@ then
 fi
 repo="iron-iot-$mi"
 
-echo "requesting latest $repo release url"
-url=`curl \
-		-H "Accept: application/vnd.github.v3+json" \
-		https://api.github.com/repos/ironman9967/$repo/releases/latest | \
-	grep -o 'tarball_url.*' | \
-	grep -o 'http[^",]*'
-`
+if [ "$version" == "" ]
+then
+	echo "requesting latest $repo release url"
+	url=`curl \
+			-H "Accept: application/vnd.github.v3+json" \
+			https://api.github.com/repos/ironman9967/$repo/releases/latest | \
+		grep -o 'tarball_url.*' | \
+		grep -o 'http[^",]*'
+	`
 
-echo "downloading release from $url"
+	echo "downloading release from $url"
 
-echo $mi
-
-version=`echo $url | grep -o '[^/]*$'`
+	version=`echo $url | grep -o '[^/]*$'`
+fi
 filename="prebuild_${mi}_app_$version.tar.gz"
 rm -rf $filename
 
