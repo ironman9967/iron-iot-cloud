@@ -8,17 +8,25 @@ import { ensureDirSync } from 'fs-extra'
 export const getModelItrStr = (d, sep = '-') =>
 	`${d.model}${sep}${d.iteration}`
 
-export const getTarFolderPath = (d, type) =>
-	`bin/devices/${d.model}/${d.iteration}/${type}`
+export const getTarSuffix = (d, type) =>
+	`${getModelItrStr(d)}_${type}_${d[type].version}.tar.gz`
 
-export const getTarFilePath = (d, type) =>
-	`${getTarFolderPath(d, type)}/${d.model}-${d.iteration}_${type}_${d[type].version}.tar.gz`
+export const getBuiltFolderPath = (d, type) =>
+	`bin/devices/${getModelItrStr(d, '/')}/${type}`
+
+export const getBuiltFilePath = (d, type) =>
+	`${getBuiltTarFolderPath(d, type)}/${getTarSuffix(e, type)}`
+
+export const getPrebuildFilePath = () => `bin/devices/prebuilds`
+
+export const getPrebuildFilePath = (d, type) =>
+	`bin/devices/prebuilds/prebuild_${getTarSuffix(e, type)}`
 
 export const downloadDevicePrebuild = d => {
+	const cwd = path.join(path.dirname(__dirname),
+		`./http-server/static-files/public/${getPrebuildFilePath()}`)
+	ensureDirSync(cwd)
 	return new Promise((resolve, reject) => {
-		const cwd = path.join(path.dirname(__dirname),
-			`./http-server/static-files/public/${getTarFolderPath(d, 'app')}`)
-		ensureDirSync(cwd)
 		exec([
 			'sh',
 			path.resolve('./scripts/get-app.sh'),

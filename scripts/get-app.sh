@@ -22,7 +22,7 @@ echo "downloading release from $url"
 echo $mi
 
 version=`echo $url | grep -o '[^/]*$'`
-filename="prebuild_${mi}_$version.tar.gz"
+filename="prebuild_${mi}_app_$version.tar.gz"
 rm -rf $filename
 
 echo "downloading $repo release $version"
