@@ -1,6 +1,6 @@
 {
 	"name": "iron-iot-cloud",
-	"version": "0.0.22",
+	"version": "0.0.23",
 	"private": true,
 	"description": "",
 	"main": "index.js",
