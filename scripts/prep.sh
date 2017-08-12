@@ -1,5 +1,7 @@
 #!/bin/bash
 
+model=$1
+
 source ./common/scripts/start-nvm.sh
 
 echo 'installing node stable'
