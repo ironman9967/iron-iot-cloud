@@ -6,7 +6,7 @@ import { createBinDownloader } from './bin-downloader'
 
 import { createHttpServer } from './http-server'
 import { routeApi } from './http-server/api'
-import { routePublic } from './http-server/public-route'
+import { routePublic } from './http-server/static-files'
 
 const devices = [{
 	model: 'phub',

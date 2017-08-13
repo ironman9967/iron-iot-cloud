@@ -5,7 +5,7 @@ export const createBinDownloaderApi = ({
 	const apiRoute = 'api/bin/downloader'
 
 	return {
-		createRoute: prebuildNeeded => ({
+		createRoute: () => ({
 			method: 'POST',
 			path: `/${apiRoute}/prebuild`,
 			handler: ({
