@@ -1,6 +1,6 @@
 
-import filter from 'lodash/fp/filter'
 import get from 'lodash/fp/get'
+import find from 'lodash/fp/find'
 import rp from 'request-promise'
 
 import {
@@ -22,25 +22,23 @@ export const createBinVersionsApi = ({
 }) => {
 	const devices = []
 
-	const removeDevice = d => filter(({
-		model: m,
-		iteration: i
-	}) => d.model != m && d.iteration != i)
-
-	deviceUpsert.subscribe(d => {
-		getLatestAppVersion(d)
+	deviceUpsert.subscribe(upserted =>
+		getLatestAppVersion(upserted)
 			.then(version => {
+				let d = find(d =>
+					d.model == upserted.model
+					&& d.iteration == upserted.iteration)(devices)
+				if (!d) {
+					d = upserted
+					devices.push(d)
+				}
 				if (!d.app || d.app.version != version) {
-					d.app = {
-						version
-					}
+					d.app = { version }
 					d.app.tar = getBuiltFilePath(d, 'app')
 					prebuildNeeded.next(d)
 				}
-				removeDevice(d)
-				devices.push(d)
 			})
-	})
+	)
 
 	const apiRoute = 'api/bin/versions'
 

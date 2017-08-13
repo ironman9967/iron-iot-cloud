@@ -1,6 +1,6 @@
 
 export const createBinDownloaderApi = ({
-	prebuildNeeded
+	deviceUpsert
 }) => {
 	const apiRoute = 'api/bin/downloader'
 
@@ -18,11 +18,7 @@ export const createBinDownloaderApi = ({
 				reply()
 				if (ref_type == 'tag' && version.indexOf('v') == 0)  {
 					const [ ,, model, iteration ] = repo.split('-')
-					prebuildNeeded.next({
-						model,
-						iteration,
-						app: { version }
-					})
+					deviceUpsert.next({ model, iteration })
 				}
 			}
 		})
