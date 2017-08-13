@@ -1,6 +1,6 @@
 
 import { createBinVersionsApi } from './bin/versions'
-import { createBinDownloaderApi } from './bin/downloader'
+import { createBinPrebuildApi } from './bin/prebuild'
 
 export const routeApi = (server, {
 	deviceUpsert,
@@ -12,10 +12,10 @@ export const routeApi = (server, {
 	})
 	server.route(binVersionsRoute())
 
-	const { createRoute: binDownloaderRoute } = createBinDownloaderApi({
+	const { createRoute: binPerbuilderRoute } = createBinPrebuildApi({
 		deviceUpsert
 	})
-	server.route(binDownloaderRoute())
+	server.route(binPerbuilderRoute())
 
 	return server
 }

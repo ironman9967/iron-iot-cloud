@@ -7,17 +7,20 @@ import map from 'lodash/fp/map'
 
 const fsReaddir = promisify(readdir)
 
-import { prebuildFolder } from '../../../bin-downloader'
+import {
+	prebuildFolder,
+	getPrebuildFolder
+} from '../../../bin-downloader'
 
-export const createBinDownloaderApi = ({
+export const createBinPrebuildApi = ({
 	deviceUpsert
 }) => {
-	const apiRoute = 'api/bin/downloader'
+	const apiRoute = 'api/bin/devices/prebuilds'
 
 	return {
 		createRoute: () => ({
 			method: [ 'GET','POST' ],
-			path: `/${apiRoute}/prebuild`,
+			path: `/${apiRoute}`,
 			handler: ({
 				method,
 				payload
