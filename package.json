@@ -1,6 +1,6 @@
 {
 	"name": "iron-iot-cloud",
-	"version": "0.0.31",
+	"version": "0.0.32",
 	"private": true,
 	"description": "",
 	"main": "index.js",
@@ -63,8 +63,13 @@
 	},
 	"watch": {
 		"start-local": {
-			"patterns": [ "src" ],
-			"extensions": [ "js", "json" ]
+			"patterns": [
+				"src"
+			],
+			"extensions": [
+				"js",
+				"json"
+			]
 		}
 	}
 }
