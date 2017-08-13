@@ -9,7 +9,7 @@ import { ensureDirSync } from 'fs-extra'
 const fsStat = promisify(fs.stat)
 const fsReaddir = promisify(fs.readdir)
 
-const staticFilesPublicUrl = 'http-server/static-files/public'
+const staticFilesPublicUrl = 'http-server/public'
 export const getPrebuildFolder = () => `bin/devices/prebuilds`
 export const prebuildFolder = path.join(path.dirname(__dirname),
 	`./${staticFilesPublicUrl}/${getPrebuildFolder()}`)
