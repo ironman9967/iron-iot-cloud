@@ -46,10 +46,6 @@ const getLocalVersion = (d, prebuild = false) => {
 			staticFilesPublicUrl,
 			getBuiltFolder(d, 'app')
 		)
-
-	console.log(folder)
-	process.exit()
-
 	return fsStat(folder)
 		.then(() => fsReaddir(folder))
 		.catch(err => {
@@ -68,44 +64,34 @@ export const getLocalPrebuildVersion = d => getLocalVersion(d, true)
 export const getLocalBuiltVersion = d => getLocalVersion(d)
 
 export const checkLocalVersion = (d, getLocalVersion) =>
-	getLocalVersion(d)//.then(local => local != d.version)
-		.then(local => {
-			console.log(local)
-			console.log(d)
-			console.log(getLocalVersion.toString())
-			process.exit()
-		})
+	getLocalVersion(d).then(local => local != d.app.version)
 
 export const syncDevicePrebuild = d =>
 	checkLocalVersion(d, getLocalBuiltVersion)
-		// .then(buildNeeded => buildNeeded
-		// 	? checkLocalVersion(d, getLocalPrebuildVersion)
-		// 		.then(prebuidNeeded => ({
-		// 			buildNeeded,
-		// 			prebuidNeeded
-		// 		}))
-		// 	: {
-		// 		buildNeeded: false,
-		// 		prebuidNeeded: false
-		// 	})
-		// .then(({ buildNeeded, prebuidNeeded }) => prebuidNeeded
-		// 	? downloadDevicePrebuild(d).then(() => { buildNeeded })
-		// 	: { buildNeeded })
+		.then(buildNeeded => buildNeeded
+			? checkLocalVersion(d, getLocalPrebuildVersion)
+				.then(prebuidNeeded => ({
+					buildNeeded,
+					prebuidNeeded
+				}))
+			: {
+				buildNeeded: false,
+				prebuidNeeded: false
+			})
+		.then(({ buildNeeded, prebuidNeeded }) => prebuidNeeded
+			? downloadDevicePrebuild(d).then(() => ({ buildNeeded }))
+			: { buildNeeded })
 
-export const downloadDevicePrebuild = ({
-	model,
-	iteration,
-	version
-}) => {
+export const downloadDevicePrebuild = d => {
 	return new Promise((resolve, reject) => {
 		const args = [
 			'sh',
-			path.resolve('./scripts/get-app.sh'),
-			model,
-			iteration
+			path.resolve('./dist/scripts/get-app.sh'),
+			d.model,
+			d.iteration
 		]
-		if (version) {
-			args.push(version)
+		if (d.app && d.app.version) {
+			args.push(d.app.version)
 		}
 		exec(args.join(' '), { prebuildFolder }, (err, stdout, stderr) => {
 			if (err) {
@@ -113,11 +99,19 @@ export const downloadDevicePrebuild = ({
 				reject(err)
 			}
 			else {
-				resolve({
-					device: d,
-					stdout,
-					stderr
-				})
+				fsStat(path.join(prebuildFolder, getTarSuffix(d, 'app')))
+					.then(() => resolve({
+						device: d,
+						stdout,
+						stderr
+					}))
+					.catch(() => {
+						const err = new Error(`${getModelItrStr(d)} prebuild failed to download`)
+						err.device = d
+						err.getAppStdout = stdout
+						err.getAppStderr = stderr
+						reject(err)
+					})
 			}
 		})
 	})
@@ -129,7 +123,7 @@ export const createBinDownloader = ({
 }) => {
 	ensureDirSync(prebuildFolder)
 	prebuildNeeded.subscribe(d => syncDevicePrebuild(d)
-		.then(({ buildNeeded }) => buildNeeded
+		.then(({ buildNeeded: isBuildNeeded }) => isBuildNeeded
 			? buildNeeded.next(d)
 			: void 0
 		)

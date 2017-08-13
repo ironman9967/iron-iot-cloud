@@ -10,7 +10,7 @@ export const createHttpServer = port => {
 		connections: {
 			routes: {
 				files: {
-					relativeTo: path.join(__dirname, 'static-files/public')
+					relativeTo: path.join(__dirname, 'public')
 				}
 			}
 		}

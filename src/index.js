@@ -6,7 +6,7 @@ import { createBinDownloader } from './bin-downloader'
 
 import { createHttpServer } from './http-server'
 import { routeApi } from './http-server/api'
-import { routeStaticFiles } from './http-server/static-files'
+import { routePublic } from './http-server/public'
 
 const devices = [{
 // 	model: 'phub',
@@ -25,7 +25,8 @@ const prebuildNeeded = new Subject()
 const buildNeeded = new Subject()
 
 createBinDownloader({
-	prebuildNeeded
+	prebuildNeeded,
+	buildNeeded
 })
 	.then(() => createHttpServer(port))
 	.then(server => routeApi(server, {
@@ -34,7 +35,7 @@ createBinDownloader({
 	}))
 	.then(() => each(d => deviceUpsert.next(d))(devices))
 
-	// .then(server => routeStaticFiles(server))
+	// .then(server => routePublic(server))
 	// .then(server => server.start(err => {
 	// 	if (err) {
 	// 		throw err

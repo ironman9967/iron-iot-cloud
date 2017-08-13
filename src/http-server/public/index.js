@@ -1,7 +1,7 @@
 
 import path from 'path'
 
-export const routeStaticFiles = server => {
+export const routePublic = server => {
 	server.route({
 		method: 'GET',
 		path: '/{param*}',

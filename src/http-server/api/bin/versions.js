@@ -9,7 +9,7 @@ import {
 
 export const getLatestAppVersion = d =>
 	rp({
-		uri: 'https://api.github.com/repos/ironman9967/' +
+		uri: `${process.env.GITHUB_API_URI}/repos/ironman9967/` +
 			`iron-iot-${getModelItrStr(d)}/releases/latest`,
 	    headers: { 'User-Agent': 'iron-iot' },
 		json: true

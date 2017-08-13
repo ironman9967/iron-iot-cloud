@@ -10,18 +10,18 @@ then
 fi
 repo="iron-iot-$mi"
 
+echo "requesting latest $repo release url"
+url=`curl \
+		-H "Accept: application/vnd.github.v3+json" \
+		$GITHUB_API_URI/repos/ironman9967/$repo/releases/latest | \
+	grep -o 'tarball_url.*' | \
+	grep -o 'http[^",]*'
+`
+
+echo "downloading release from $url"
+
 if [ "$version" == "" ]
 then
-	echo "requesting latest $repo release url"
-	url=`curl \
-			-H "Accept: application/vnd.github.v3+json" \
-			https://api.github.com/repos/ironman9967/$repo/releases/latest | \
-		grep -o 'tarball_url.*' | \
-		grep -o 'http[^",]*'
-	`
-
-	echo "downloading release from $url"
-
 	version=`echo $url | grep -o '[^/]*$'`
 fi
 filename="prebuild_${mi}_app_$version.tar.gz"
