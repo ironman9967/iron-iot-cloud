@@ -1,5 +1,7 @@
 
-export const createBinDownloaderApi = () => {
+export const createBinDownloaderApi = ({
+	prebuildNeeded
+}) => {
 	const apiRoute = 'api/bin/downloader'
 
 	return {
@@ -9,16 +11,17 @@ export const createBinDownloaderApi = () => {
 			handler: ({
 				payload: {
 					ref: version,
+					ref_type,
 					repository: { name: repo }
 				}
 			}, reply) => {
 				reply()
-				if (ref_type == 'tag' && ref.indexOf('v') == 0)  {
+				if (ref_type == 'tag' && version.indexOf('v') == 0)  {
 					const [ ,, model, iteration ] = repo.split('-')
 					prebuildNeeded.next({
 						model,
 						iteration,
-						version
+						app: { version }
 					})
 				}
 			}

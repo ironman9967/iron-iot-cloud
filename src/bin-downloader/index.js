@@ -85,6 +85,9 @@ export const syncDevicePrebuild = d =>
 export const downloadDevicePrebuild = d => {
 	return new Promise((resolve, reject) => {
 		const args = [
+			'cd',
+			prebuildFolder,
+			'&&',
 			'sh',
 			path.resolve('./dist/scripts/get-app.sh'),
 			d.model,
@@ -93,13 +96,13 @@ export const downloadDevicePrebuild = d => {
 		if (d.app && d.app.version) {
 			args.push(d.app.version)
 		}
-		exec(args.join(' '), { prebuildFolder }, (err, stdout, stderr) => {
+		exec(args.join(' '), (err, stdout, stderr) => {
 			if (err) {
 				err.stderr = stderr
 				reject(err)
 			}
 			else {
-				fsStat(path.join(prebuildFolder, getTarSuffix(d, 'app')))
+				fsStat(path.join(prebuildFolder, `prebuild_${getTarSuffix(d, 'app')}`))
 					.then(() => resolve({
 						device: d,
 						stdout,
@@ -110,6 +113,7 @@ export const downloadDevicePrebuild = d => {
 						err.device = d
 						err.getAppStdout = stdout
 						err.getAppStderr = stderr
+						console.log(err)
 						reject(err)
 					})
 			}

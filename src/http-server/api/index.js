@@ -10,8 +10,12 @@ export const routeApi = (server, {
 		deviceUpsert,
 		prebuildNeeded
 	})
-	const { createRoute: binDownloaderRoute } = createBinDownloaderApi()
 	server.route(binVersionsRoute())
+
+	const { createRoute: binDownloaderRoute } = createBinDownloaderApi({
+		prebuildNeeded
+	})
 	server.route(binDownloaderRoute())
+
 	return server
 }

@@ -6,13 +6,13 @@ import { createBinDownloader } from './bin-downloader'
 
 import { createHttpServer } from './http-server'
 import { routeApi } from './http-server/api'
-import { routePublic } from './http-server/public'
+import { routePublic } from './http-server/public-route'
 
 const devices = [{
-// 	model: 'phub',
-// 	iteration: 1,
-// 	interpreter: { type: 'node', version: 'stable' }
-// }, {
+	model: 'phub',
+	iteration: 1,
+	interpreter: { type: 'node', version: 'stable' }
+}, {
 	model: 'armb',
 	iteration: 1,
 	interpreter: { type: 'node', version: 'stable' }
@@ -33,12 +33,11 @@ createBinDownloader({
 		deviceUpsert,
 		prebuildNeeded
 	}))
-	.then(() => each(d => deviceUpsert.next(d))(devices))
-
-	// .then(server => routePublic(server))
-	// .then(server => server.start(err => {
-	// 	if (err) {
-	// 		throw err
-	// 	}
-	// 	server.log(`server up on ${port}`)
-	// }))
+	.then(server => routePublic(server))
+	.then(server => server.start(err => {
+		if (err) {
+			throw err
+		}
+		server.log(`server up on ${port}`)
+		each(d => deviceUpsert.next(d))(devices)
+	}))
