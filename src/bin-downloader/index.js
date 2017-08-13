@@ -82,8 +82,8 @@ export const syncDevicePrebuild = d =>
 			? downloadDevicePrebuild(d).then(() => ({ buildNeeded }))
 			: { buildNeeded })
 
-export const downloadDevicePrebuild = d => {
-	return new Promise((resolve, reject) => {
+export const downloadDevicePrebuild = d =>
+	new Promise((resolve, reject) => {
 		const args = [
 			'cd',
 			prebuildFolder,
@@ -119,7 +119,6 @@ export const downloadDevicePrebuild = d => {
 			}
 		})
 	})
-}
 
 export const createBinDownloader = ({
 	prebuildNeeded,

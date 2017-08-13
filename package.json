@@ -8,7 +8,7 @@
 		"build": "npm run dl-common && npm run babel && cp -r ./scripts ./dist/scripts",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "npm run build && chmod +x ./common/scripts/start.sh && ./common/scripts/start.sh",
-		"start-local": "export GITHUB_API_URI=http://localhost:9956 && npm start",
+		"start-local": "export GITHUB_API_URI=http://localhost:9956 && export CLOUD_URI=http://localhost:9967 && npm start",
 		"babel": "rm -rf dist && babel src --out-dir dist && npm run make-public",
 		"dl-common": "rm -rf prep.sh && wget https://raw.githubusercontent.com/ironman9967/iron-iot-common/master/scripts/prep.sh && chmod +x prep.sh && ./prep.sh && rm -rf prep.sh",
 		"bump": "npm version $1",
