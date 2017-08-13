@@ -1,5 +1,6 @@
 
 import filter from 'lodash/fp/filter'
+import get from 'lodash/fp/get'
 import rp from 'request-promise'
 
 import {
@@ -76,9 +77,19 @@ export const createBinVersionsApi = ({
 	return {
 		createRoute: () => ({
 			method: 'GET',
-			path: `/${apiRoute}/{model}/{iteration?}`,
-			handler: ({ params: { model, iteration } }, reply) =>
-				reply(getDeviceVersions(model, iteration))
+			path: `/${apiRoute}/{model}/{iteration}/{filter*}`,
+			handler: ({
+					params: {
+					model,
+					iteration,
+					filter: filterStr
+				}
+			}, reply) => {
+				const dvs = getDeviceVersions(model, iteration)
+				const filter = filterStr ? filterStr.split('/') : void 0
+				const res = filter ? get(filter.join('.'))(dvs) : dvs
+				reply(res).statusCode = res ? 200 : 204
+			}
 		})
 	}
 }
