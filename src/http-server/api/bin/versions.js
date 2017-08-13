@@ -12,7 +12,7 @@ export const getLatestAppVersion = d =>
 	rp({
 		uri: `${process.env.GITHUB_API_URI}/repos/ironman9967/` +
 			`iron-iot-${getModelItrStr(d)}/releases/latest`,
-	    headers: { 'User-Agent': 'iron-iot' },
+	    headers: { 'User-Agent': 'iron-iot-cloud' },
 		json: true
 	}).then(({ tag_name: version }) => version)
 
