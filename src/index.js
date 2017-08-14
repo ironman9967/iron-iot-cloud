@@ -9,10 +9,10 @@ import { routeApi } from './http-server/api'
 import { routePublic } from './http-server/static-files'
 
 const devices = [{
-	model: 'phub',
-	iteration: 1,
-	interpreter: { type: 'node', version: 'stable' }
-}, {
+// 	model: 'phub',
+// 	iteration: 1,
+// 	interpreter: { type: 'node', version: 'stable' }
+// }, {
 	model: 'armb',
 	iteration: 1,
 	interpreter: { type: 'node', version: 'stable' }

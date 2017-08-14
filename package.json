@@ -5,7 +5,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"build": "npm run dl-common && npm run babel && cp -r ./scripts ./dist/scripts",
+		"build": "npm run dl-common && npm run babel",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "npm run build && chmod +x ./common/scripts/start.sh && ./common/scripts/start.sh",
 		"start-local": "export GITHUB_API_URI=http://localhost:9956 && export CLOUD_URI=http://localhost:9967 && npm start",
