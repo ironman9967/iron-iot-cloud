@@ -66,8 +66,8 @@ export const getLocalBuiltVersion = d => getLocalVersion(d)
 export const checkLocalVersion = (d, getLocalVersion) =>
 	getLocalVersion(d).then(local => local != d.app.version)
 
-export const syncDevicePrebuild = d =>
-	checkLocalVersion(d, getLocalBuiltVersion)
+export const syncDevicePrebuild = d => {
+	return checkLocalVersion(d, getLocalBuiltVersion)
 		.then(buildNeeded => buildNeeded
 			? checkLocalVersion(d, getLocalPrebuildVersion)
 				.then(prebuidNeeded => ({
@@ -81,6 +81,7 @@ export const syncDevicePrebuild = d =>
 		.then(({ buildNeeded, prebuidNeeded }) => prebuidNeeded
 			? downloadDevicePrebuild(d).then(() => ({ buildNeeded }))
 			: { buildNeeded })
+}
 
 export const downloadDevicePrebuild = d =>
 	new Promise((resolve, reject) => {

@@ -4,8 +4,7 @@ import { createBinPrebuildApi } from './bin/prebuild'
 
 export const routeApi = (server, {
 	deviceUpsert,
-	prebuildNeeded,
-	buildComplete
+	prebuildNeeded
 }) => {
 	const { createRoute: binVersionsRoute } = createBinVersionsApi({
 		deviceUpsert,

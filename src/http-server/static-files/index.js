@@ -22,7 +22,7 @@ export const routePublic = server => {
 	return server
 }
 
-export const routePostBuilt = server => {
+export const routeBuiltPost = server => {
 	const route = 'bin/devices/builds'
 	const prebuildFolderPath = path.resolve('./dist/http-server/public/prebuilds')
 	server.route({

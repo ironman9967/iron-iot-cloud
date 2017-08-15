@@ -8,14 +8,14 @@ import { createHttpServer } from './http-server'
 import { routeApi } from './http-server/api'
 import {
 	routePublic,
-	routePostBuilt
+	routeBuiltPost
 } from './http-server/static-files'
 
 const devices = [{
-// 	model: 'phub',
-// 	iteration: 1,
-// 	interpreter: { type: 'node', version: 'stable' }
-// }, {
+	model: 'phub',
+	iteration: 1,
+	interpreter: { type: 'node', version: 'stable' }
+}, {
 	model: 'armb',
 	iteration: 1,
 	interpreter: { type: 'node', version: 'stable' }
@@ -28,11 +28,9 @@ const prebuildNeeded = new Subject()
 const buildNeeded = new Subject()
 const buildComplete = new Subject()
 
-// import rp from 'request-promise'
-// buildNeeded.subscribe(({ app: { tar } }) => rp({
-//     method: 'POST',
-//     uri: 'http:///post'
-// }))
+buildNeeded.subscribe(d => {
+	//post prebuild-ready to armb
+})
 
 createBinDownloader({
 	prebuildNeeded,
@@ -45,7 +43,7 @@ createBinDownloader({
 		buildComplete
 	}))
 	.then(server => routePublic(server))
-	.then(server => routePostBuilt(server))
+	.then(server => routeBuiltPost(server))
 	.then(server => server.start(err => {
 		if (err) {
 			throw err
