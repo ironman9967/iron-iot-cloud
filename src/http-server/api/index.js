@@ -1,10 +1,12 @@
 
 import { createBinVersionsApi } from './bin/versions'
 import { createBinPrebuildApi } from './bin/prebuild'
+import { createBinBuiltApi } from './bin/built'
 
 export const routeApi = (server, {
 	deviceUpsert,
-	prebuildNeeded
+	prebuildNeeded,
+	buildComplete
 }) => {
 	const { createRoute: binVersionsRoute } = createBinVersionsApi({
 		deviceUpsert,
@@ -12,10 +14,15 @@ export const routeApi = (server, {
 	})
 	server.route(binVersionsRoute())
 
-	const { createRoute: binPerbuilderRoute } = createBinPrebuildApi({
+	const { createRoute: binPrebuildRoute } = createBinPrebuildApi({
 		deviceUpsert
 	})
-	server.route(binPerbuilderRoute())
+	server.route(binPrebuildRoute())
+
+	const { creatRoute: binBuiltRoute } = createBinBuiltApi({
+		buildComplete
+	})
+	server.route(binBuiltRoute)
 
 	return server
 }

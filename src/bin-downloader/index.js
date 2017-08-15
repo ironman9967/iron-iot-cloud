@@ -30,7 +30,7 @@ export const getVersionFromTarName = tarFilename => {
 }
 
 export const getBuiltFolder = (d, type) =>
-	`bin/devices/${getModelItrStr(d, '/')}/${type}`
+	`bin/devices/builds/${getModelItrStr(d, '/')}/${type}`
 
 export const getBuiltFilePath = (d, type) =>
 	`${getBuiltFolder(d, type)}/built_${getTarSuffix(d, type)}`

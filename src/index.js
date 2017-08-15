@@ -23,6 +23,13 @@ const port = 9967
 const deviceUpsert = new Subject()
 const prebuildNeeded = new Subject()
 const buildNeeded = new Subject()
+const buildComplete = new Subject()
+
+// import rp from 'request-promise'
+// buildNeeded.subscribe(({ app: { tar } }) => rp({
+//     method: 'POST',
+//     uri: 'http:///post'
+// }))
 
 createBinDownloader({
 	prebuildNeeded,
@@ -31,7 +38,8 @@ createBinDownloader({
 	.then(() => createHttpServer(port))
 	.then(server => routeApi(server, {
 		deviceUpsert,
-		prebuildNeeded
+		prebuildNeeded,
+		buildComplete
 	}))
 	.then(server => routePublic(server))
 	.then(server => server.start(err => {

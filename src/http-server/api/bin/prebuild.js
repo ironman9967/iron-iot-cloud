@@ -9,7 +9,8 @@ const fsReaddir = promisify(readdir)
 
 import {
 	prebuildFolder,
-	getPrebuildFolder
+	getPrebuildFolder,
+	getBuiltFilePath
 } from '../../../bin-downloader'
 
 export const createBinPrebuildApi = ({
@@ -31,7 +32,24 @@ export const createBinPrebuildApi = ({
 							map(filename => {
 								const f = path.join(prebuildFolder, filename)
 								const p = 'public/'
-								return `/${f.substring(f.indexOf(p) + p.length)}`
+								const getPrebuild = `/${f.substring(f.indexOf(p) + p.length)}`
+								const [
+									, model,
+									iteration,
+									version
+								] = filename.match(/prebuild_([^-]*)-([^_]*)_app_(.*)\.tar.gz/)
+								const d = {
+									model,
+									iteration,
+									app: {
+										version
+									}
+								}
+								const postBuilt = `/${getBuiltFilePath(d, 'app')}`
+								return {
+									getPrebuild,
+									postBuilt
+								}
 							})(filenames))
 						.then(reply)
 				}
