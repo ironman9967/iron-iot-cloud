@@ -6,13 +6,16 @@ import { createBinDownloader } from './bin-downloader'
 
 import { createHttpServer } from './http-server'
 import { routeApi } from './http-server/api'
-import { routePublic } from './http-server/static-files'
+import {
+	routePublic,
+	routePostBuilt
+} from './http-server/static-files'
 
 const devices = [{
-	model: 'phub',
-	iteration: 1,
-	interpreter: { type: 'node', version: 'stable' }
-}, {
+// 	model: 'phub',
+// 	iteration: 1,
+// 	interpreter: { type: 'node', version: 'stable' }
+// }, {
 	model: 'armb',
 	iteration: 1,
 	interpreter: { type: 'node', version: 'stable' }
@@ -42,6 +45,7 @@ createBinDownloader({
 		buildComplete
 	}))
 	.then(server => routePublic(server))
+	.then(server => routePostBuilt(server))
 	.then(server => server.start(err => {
 		if (err) {
 			throw err

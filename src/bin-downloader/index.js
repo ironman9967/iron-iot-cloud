@@ -98,22 +98,16 @@ export const downloadDevicePrebuild = d =>
 		}
 		exec(args.join(' '), (err, stdout, stderr) => {
 			if (err) {
-				err.stderr = stderr
 				reject(err)
 			}
 			else {
 				fsStat(path.join(prebuildFolder, `prebuild_${getTarSuffix(d, 'app')}`))
 					.then(() => resolve({
-						device: d,
-						stdout,
-						stderr
+						device: d
 					}))
 					.catch(() => {
 						const err = new Error(`${getModelItrStr(d)} prebuild failed to download`)
 						err.device = d
-						err.getAppStdout = stdout
-						err.getAppStderr = stderr
-						console.log(err)
 						reject(err)
 					})
 			}
