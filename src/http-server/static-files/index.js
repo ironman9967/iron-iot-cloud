@@ -22,7 +22,9 @@ export const routePublic = server => {
 	return server
 }
 
-export const routeBuiltPost = server => {
+export const routeBuiltPost = (server, {
+	buildComplete
+}) => {
 	const route = 'bin/devices/builds'
 	const prebuildFolderPath = path.resolve('./dist/http-server/public/prebuilds')
 	server.route({
@@ -46,12 +48,16 @@ export const routeBuiltPost = server => {
 			const builtFolderPath = path.resolve(
 				path.join('./dist/http-server/public', route, `${model}/${iteration}/app`)
 			)
+			const fullFilePath = path.join(builtFolderPath, filename)
 			emptyDirSync(builtFolderPath)
-			payload.pipe(
-				createWriteStream(path.join(builtFolderPath, filename))
-			)
+			payload.pipe(createWriteStream(fullFilePath))
 			removeSync(path.join(prebuildFolderPath,
 				`prebuild_${filename.substring('built_'.length)}`))
+			buildComplete.next({
+				model,
+				iteration,
+				fullFilePath
+			})
 			reply().statusCode = 201
 		}
 	})

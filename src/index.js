@@ -1,8 +1,13 @@
 
 import each from 'lodash/fp/each'
 import { Subject } from '@reactivex/rxjs/dist/cjs/Subject'
+import rp from 'request-promise'
 
-import { createBinDownloader } from './bin-downloader'
+import {
+	createBinDownloader,
+	getPrebuildFilePath,
+	getBuiltFilePath
+} from './bin-downloader'
 
 import { createHttpServer } from './http-server'
 import { routeApi } from './http-server/api'
@@ -28,10 +33,6 @@ const prebuildNeeded = new Subject()
 const buildNeeded = new Subject()
 const buildComplete = new Subject()
 
-buildNeeded.subscribe(d => {
-	//post prebuild-ready to armb
-})
-
 createBinDownloader({
 	prebuildNeeded,
 	buildNeeded
@@ -39,15 +40,42 @@ createBinDownloader({
 	.then(() => createHttpServer(port))
 	.then(server => routeApi(server, {
 		deviceUpsert,
-		prebuildNeeded,
-		buildComplete
+		prebuildNeeded
 	}))
 	.then(server => routePublic(server))
-	.then(server => routeBuiltPost(server))
+	.then(server => routeBuiltPost(server, {
+		buildComplete
+	}))
 	.then(server => server.start(err => {
 		if (err) {
 			throw err
 		}
+
+		buildNeeded.subscribe(d => {
+			const uri = 'http://localhost:9978/api/prebuild-ready'
+			rp({
+				method: 'POST',
+				uri,
+				body: {
+					getPrebuild: `/${getPrebuildFilePath(d, 'app')}`,
+					postBuilt: `/${getBuiltFilePath(d, 'app')}`
+				},
+				json: true
+			}).catch(err => {
+				if (err.message.indexOf('ECONNREFUSED') == -1) {
+					throw err
+				}
+				else {
+					server.log(`ARM builder not available to build ${d.model}-${d.iteration} app ${d.app.version} at ${uri}`)
+				}
+			})
+		})
+
+		buildComplete.subscribe((...args) => {
+			console.log('BUILD COMPLETE!')
+			console.log(args)
+		})
+
 		server.log(`server up on ${port}`)
 		each(d => deviceUpsert.next(d))(devices)
 	}))
