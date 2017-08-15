@@ -24,12 +24,13 @@ export const createBinBuiltApi = ({
 			path: `/${apiRoute}/{filename}`,
 			config: {
 				payload: {
-					output: 'file',
-					parse: true
+					output: 'stream',
+					parse: true,
+					allow: 'multipart/form-data'
 				}
 			},
-			handler: ({ payload, params }, reply) => {
-				console.log(payload)
+			handler: (req, reply) => {
+				console.log(req)
 				reply().statusCode = 201
 			}
 		})

@@ -22,7 +22,9 @@ export const routeApi = (server, {
 	const { creatRoute: binBuiltRoute } = createBinBuiltApi({
 		buildComplete
 	})
-	server.route(binBuiltRoute)
+	// server.route(binBuiltRoute())
+
+	console.log(binBuiltRoute())
 
 	return server
 }

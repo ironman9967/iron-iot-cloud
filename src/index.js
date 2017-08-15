@@ -49,3 +49,4 @@ createBinDownloader({
 		server.log(`server up on ${port}`)
 		each(d => deviceUpsert.next(d))(devices)
 	}))
+	.catch(console.error)
