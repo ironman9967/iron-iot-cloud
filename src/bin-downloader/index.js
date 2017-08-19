@@ -104,7 +104,7 @@ export const downloadDevicePrebuild = d =>
 					.then(() => resolve({
 						device: d
 					}))
-					.catch(err => {
+					.catch(()) => {
 						const err = new Error(`${getModelItrStr(d)} prebuild failed to download`)
 						err.device = d
 						reject(err)
