@@ -2,7 +2,7 @@
 
 model=$1
 
-source ./common/scripts/start-nvm.sh
+source $APP_PATH/common/scripts/start-nvm.sh
 
 echo 'installing node stable'
 nvm install stable
@@ -14,13 +14,13 @@ echo 'setting nvm to use stable'
 nvm use stable
 
 echo "getting app for $model"
-wget "https://raw.githubusercontent.com/ironman9967/iron-iot-cloud/master/scripts/get-app.sh"
-source ./get-app.sh cloud
+wget -O $APP_PATH/get-app.sh "https://raw.githubusercontent.com/ironman9967/iron-iot-cloud/master/scripts/get-app.sh"
+source $APP_PATH/get-app.sh cloud
 
-source ./common/scripts/build-app.sh $version cloud
+source $APP_PATH/common/scripts/build-app.sh $version cloud
 
-rm -rf get-app.sh
+rm -rf $APP_PATH/get-app.sh
 
 echo "starting $repo app"
-chmod +x ./common/scripts/start.sh
-./common/scripts/start.sh
+chmod +x $APP_PATH/common/scripts/start.sh
+$APP_PATH/common/scripts/start.sh
