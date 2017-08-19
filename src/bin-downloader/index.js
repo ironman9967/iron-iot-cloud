@@ -90,7 +90,7 @@ export const downloadDevicePrebuild = d =>
 			prebuildFolder,
 			'&&',
 			'sh',
-			path.resolve('./scripts/get-app.sh'),
+			path.resolve('./common/get-app.sh'),
 			d.model,
 			d.iteration
 		]
