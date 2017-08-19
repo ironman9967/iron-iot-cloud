@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#test
+
 model=$1
 
 source $APP_PATH/common/scripts/start-nvm.sh

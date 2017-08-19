@@ -86,11 +86,9 @@ export const syncDevicePrebuild = d => {
 export const downloadDevicePrebuild = d =>
 	new Promise((resolve, reject) => {
 		const args = [
-			'cd',
-			prebuildFolder,
-			'&&',
 			'sh',
 			path.resolve('./common/scripts/get-app.sh'),
+			prebuildFolder,
 			d.model,
 			d.iteration
 		]
@@ -106,7 +104,7 @@ export const downloadDevicePrebuild = d =>
 					.then(() => resolve({
 						device: d
 					}))
-					.catch(() => {
+					.catch(err => {
 						const err = new Error(`${getModelItrStr(d)} prebuild failed to download`)
 						err.device = d
 						reject(err)
