@@ -52,7 +52,7 @@ createBinDownloader({
 		}
 
 		buildNeeded.subscribe(d => {
-			const uri = 'http://localhost:9978/api/prebuild-ready'
+			const uri = 'http://192.168.1.101:9978/api/prebuild-ready'
 			rp({
 				method: 'POST',
 				uri,
