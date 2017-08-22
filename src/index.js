@@ -71,9 +71,17 @@ createBinDownloader({
 			})
 		})
 
-		buildComplete.subscribe((...args) => {
+		buildComplete.subscribe(({
+			model,
+			iteration,
+			builtFilePath
+		}) => {
 			console.log('BUILD COMPLETE!')
-			console.log(args)
+			console.log({
+				model,
+				iteration,
+				builtFilePath
+			})
 		})
 
 		server.log(`server up on ${port}`)
