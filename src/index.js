@@ -52,7 +52,7 @@ createBinDownloader({
 		}
 
 		buildNeeded.subscribe(d => {
-			const uri = 'http://192.168.1.101:9978/api/prebuild-ready'
+			const uri = `${process.env.ARMB_1_URI}/api/prebuild-ready`
 			rp({
 				method: 'POST',
 				uri,
