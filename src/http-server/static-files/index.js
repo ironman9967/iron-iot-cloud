@@ -51,7 +51,7 @@ export const routeBuiltPost = (server, {
 			)
 			const builtFilePath = path.join(builtFolderPath, filename)
 			emptyDirSync(builtFolderPath)
-			payload.pipe(createWriteStream(builtFilePath))
+			payload[filename].pipe(createWriteStream(builtFilePath))
 			removeSync(path.join(prebuildFolderPath,
 				`prebuild_${filename.substring('built_'.length)}`))
 			buildComplete.next({
