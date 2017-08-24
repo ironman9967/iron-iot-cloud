@@ -16,11 +16,14 @@ import {
 	routeBuiltPost
 } from './http-server/static-files'
 
+const { name, version } = require(`${process.env.APP_PATH}/package.json`)
+process.title = `${name}@${version.substring(1)}`
+
 const devices = [{
-	model: 'phub',
-	iteration: 1,
-	interpreter: { type: 'node', version: 'stable' }
-}, {
+// 	model: 'phub',
+// 	iteration: 1,
+// 	interpreter: { type: 'node', version: 'stable' }
+// }, {
 	model: 'armb',
 	iteration: 1,
 	interpreter: { type: 'node', version: 'stable' }
@@ -84,6 +87,7 @@ createBinDownloader({
 			})
 		})
 
+		server.log(`${process.title} started`)
 		server.log(`server up on ${port}`)
 		each(d => deviceUpsert.next(d))(devices)
 	}))
