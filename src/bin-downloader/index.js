@@ -87,7 +87,7 @@ export const downloadDevicePrebuild = d =>
 	new Promise((resolve, reject) => {
 		const args = [
 			'sh',
-			path.resolve('./common/scripts/get-app.sh'),
+			path.resolve(`${process.env.APP_PATH}/common/scripts/get-app.sh`),
 			prebuildFolder,
 			d.model,
 			d.iteration
