@@ -47,7 +47,7 @@ export const routeBuiltPost = (server, {
 			}
 		}, reply) => {
 			const builtFolderPath = path.resolve(
-				path.join('./dist/http-server/public', route, `${model}/${iteration}/app`)
+				path.join(`${process.env.APP_PATH}/dist/http-server/public`, route, `${model}/${iteration}/app`)
 			)
 			const builtFilePath = path.join(builtFolderPath, filename)
 			emptyDirSync(builtFolderPath)
