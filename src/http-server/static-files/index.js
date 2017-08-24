@@ -46,25 +46,32 @@ export const routeBuiltPost = (server, {
 				filename
 			}
 		}, reply) => {
-			const builtFolderPath = path.resolve(
-				path.join(`${process.env.APP_PATH}/dist/http-server/public`, route, `${model}/${iteration}/app`)
-			)
-			const builtFilePath = path.join(builtFolderPath, filename)
-			emptyDirSync(builtFolderPath)
-			payload[filename].pipe(createWriteStream(builtFilePath))
-			const prebuildFilename = path.join(prebuildFolderPath,
-				`prebuild_${filename.substring('built_'.length)}`)
+			const selfUpdate = model == 'cloud'
+			if (!selfUpdate) {
+				const builtFolderPath = path.resolve(path.join(
+					`${process.env.APP_PATH}/dist/http-server/public`,
+					route,
+					`${model}/${iteration}/app`
+				))
+				const builtFilePath = path.join(builtFolderPath, filename)
+				emptyDirSync(builtFolderPath)
+				payload[filename].pipe(createWriteStream(builtFilePath))
+				const prebuildFilename = path.join(prebuildFolderPath,
+					`prebuild_${filename.substring('built_'.length)}`)
 
-			server.log(`removing prebuild`, { prebuildFilename })
-
-			removeSync(prebuildFilename)
-
-			buildComplete.next({
-				model,
-				iteration,
-				builtFilePath
-			})
+				server.log(`removing prebuild`, { prebuildFilename })
+				removeSync(prebuildFilename)
+				buildComplete.next({
+					model,
+					iteration,
+					builtFilePath
+				})
+			}
 			reply().statusCode = 201
+			if (selfUpdate) {
+				server.log('!!! UPDATE READY !!!')
+				process.exit()
+			}
 		}
 	})
 	return server
