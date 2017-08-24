@@ -27,7 +27,7 @@ export const routeBuiltPost = (server, {
 }) => {
 	const route = 'bin/devices/builds'
 	const prebuildFolderPath =
-		path.resolve('./dist/http-server/public/bin/devices/prebuilds')
+		path.resolve(`${process.env.APP_PATH}/dist/http-server/public/bin/devices/prebuilds`)
 	server.route({
 		method: 'POST',
 		path: `/${route}/{model}/{iteration}/app/{filename}`,
