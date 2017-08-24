@@ -52,8 +52,13 @@ export const routeBuiltPost = (server, {
 			const builtFilePath = path.join(builtFolderPath, filename)
 			emptyDirSync(builtFolderPath)
 			payload[filename].pipe(createWriteStream(builtFilePath))
-			removeSync(path.join(prebuildFolderPath,
-				`prebuild_${filename.substring('built_'.length)}`))
+			const prebuildFilename = path.join(prebuildFolderPath,
+				`prebuild_${filename.substring('built_'.length)}`)
+
+			server.log(`removing prebuild`, { prebuildFilename })
+
+			removeSync(prebuildFilename)
+
 			buildComplete.next({
 				model,
 				iteration,
