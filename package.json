@@ -14,6 +14,7 @@
 		"bump": "npm version $1",
 		"release": "chmod +x ./common/scripts/release.sh && ./common/scripts/release.sh v$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')",
 		"release-patch": "npm run bump -- patch && npm run release",
+	    "release-minor": "npm run bump -- minor && npm run release",
 		"watch": "npm-watch",
 		"make-public": "rm -rf dist/http-server/public && mkdir dist/http-server/public"
 	},
