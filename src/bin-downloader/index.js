@@ -15,7 +15,7 @@ export const prebuildFolder = path.join(path.dirname(__dirname),
 	`./${staticFilesPublicUrl}/${getPrebuildFolder()}`)
 
 export const getModelItrStr = ({ model, iteration }, sep = '-') =>
-	`${model}${sep}${iteration}`
+	`${model}${iteration ? `${sep}${iteration}` : ''}`
 
 export const getTarSuffix = (d, type) =>
 	`${getModelItrStr(d)}_${type}_${d[type].version}.tar.gz`
