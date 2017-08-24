@@ -16,7 +16,7 @@ import {
 	routeBuiltPost
 } from './http-server/static-files'
 
-const { name, version } = require(`${process.env.APP_PATH}/package.json`)
+import { name, version } from '../package.json'
 process.title = `${name}@${version.substring(1)}`
 
 const devices = [{
