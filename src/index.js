@@ -31,64 +31,49 @@ const devices = [{
 
 const port = 9967
 
+const logger = new Subject()
 const deviceUpsert = new Subject()
 const prebuildNeeded = new Subject()
 const buildNeeded = new Subject()
 const buildComplete = new Subject()
 
 createBinDownloader({
+	logger,
 	prebuildNeeded,
 	buildNeeded
 })
-	.then(() => createHttpServer(port))
-	.then(server => routeApi(server, {
+	.then(() => createHttpServer({ logger, port }))
+	.then(server => {
+		logger.subscribe(arg => {
+			const { message, data } =
+				typeof arg == 'string' ? { message: arg } :
+				Array.isArray(arg) ? { message: arg[0], data: arg[1] } :
+				arg
+			server.log(message, data)
+		})
+		return server
+	})
+	.then(server => routeApi({
+		logger,
+		server,
 		deviceUpsert,
 		prebuildNeeded
 	}))
-	.then(server => routePublic(server))
-	.then(server => routeBuiltPost(server, {
+	.then(server => routePublic({
+		logger,
+		server
+	}))
+	.then(server => routeBuiltPost({
+		logger,
+		server,
 		buildComplete
 	}))
 	.then(server => server.start(err => {
 		if (err) {
 			throw err
 		}
-
-		buildNeeded.subscribe(d => {
-			const uri = `${process.env.ARMB_1_URI}/api/prebuild-ready`
-			rp({
-				method: 'POST',
-				uri,
-				body: {
-					getPrebuild: `/${getPrebuildFilePath(d, 'app')}`,
-					postBuilt: `/${getBuiltFilePath(d, 'app')}`
-				},
-				json: true
-			}).catch(err => {
-				if (err.message.indexOf('ECONNREFUSED') == -1) {
-					throw err
-				}
-				else {
-					server.log(`ARM builder not available to build ${d.model}-${d.iteration} app ${d.app.version} at ${uri}`)
-				}
-			})
-		})
-
-		buildComplete.subscribe(({
-			model,
-			iteration,
-			builtFilePath
-		}) => {
-			console.log('BUILD COMPLETE!')
-			console.log({
-				model,
-				iteration,
-				builtFilePath
-			})
-		})
-
-		server.log(`${process.title} started`)
-		server.log(`server up on ${port}`)
+		logger.next(`${process.title} started`)
+		logger.next(`server up on ${port}`)
 		each(d => deviceUpsert.next(d))(devices)
 	}))
 	.catch(console.error)

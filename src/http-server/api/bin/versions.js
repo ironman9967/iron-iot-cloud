@@ -8,22 +8,25 @@ import {
 	getModelItrStr
 } from '../../../bin-downloader'
 
-export const getLatestAppVersion = d =>
-	rp({
+export const getLatestAppVersion = (logger, d) => {
+	return rp({
 		uri: `${process.env.GITHUB_API_URI}/repos/ironman9967/` +
 			`iron-iot-${getModelItrStr(d)}/releases/latest`,
 	    headers: { 'User-Agent': 'iron-iot-cloud' },
 		json: true
 	}).then(({ tag_name: version }) => version)
+}
 
 export const createBinVersionsApi = ({
+	logger,
 	deviceUpsert,
 	prebuildNeeded
 }) => {
 	const devices = []
 
-	deviceUpsert.subscribe(upserted =>
-		getLatestAppVersion(upserted)
+	deviceUpsert.subscribe(upserted => {
+		logger.next([ 'device upsert', { upserted }])
+		getLatestAppVersion(logger, upserted)
 			.then(version => {
 				let d = find(d =>
 					d.model == upserted.model
@@ -31,14 +34,16 @@ export const createBinVersionsApi = ({
 				if (!d) {
 					d = upserted
 					devices.push(d)
+					logger.next([ 'new device', { device: upserted }])
 				}
 				if (!d.app || d.app.version != version) {
 					d.app = { version }
 					d.app.tar = getBuiltFilePath(d, 'app')
+					logger.next([ 'device up to date', d ])
 					prebuildNeeded.next(d)
 				}
 			})
-	)
+	})
 
 	const apiRoute = 'api/bin/versions'
 
@@ -86,6 +91,12 @@ export const createBinVersionsApi = ({
 				const dvs = getDeviceVersions(model, iteration)
 				const filter = filterStr ? filterStr.split('/') : void 0
 				const res = filter ? get(filter.join('.'))(dvs) : dvs
+				logger.next([ 'device versions', {
+					model,
+					iteration,
+					filter,
+					res
+				} ])
 				reply(res).statusCode = res ? 200 : 204
 			}
 		})

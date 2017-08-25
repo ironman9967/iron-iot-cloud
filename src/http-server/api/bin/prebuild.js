@@ -14,6 +14,7 @@ import {
 } from '../../../bin-downloader'
 
 export const createBinPrebuildApi = ({
+	logger,
 	deviceUpsert
 }) => {
 	const apiRoute = 'api/bin/devices/prebuilds'
@@ -46,10 +47,12 @@ export const createBinPrebuildApi = ({
 									}
 								}
 								const postBuilt = `/${getBuiltFilePath(d, 'app')}`
-								return {
+								const res = {
 									getPrebuild,
 									postBuilt
 								}
+								logger.next([ 'prebuild available', res ])
+								return res
 							})(filenames))
 						.then(reply)
 				}
@@ -62,7 +65,11 @@ export const createBinPrebuildApi = ({
 					} = payload
 					if (ref_type == 'tag' && version.indexOf('v') == 0)  {
 						const [ ,, model, iteration ] = repo.split('-')
-						deviceUpsert.next({ model, iteration })
+						if (model != 'cloud' && iteration) {
+							const d = { model, iteration }
+							logger.next([ 'prebuild ready', d ])
+							deviceUpsert.next(d)
+						}
 					}
 				}
 			}

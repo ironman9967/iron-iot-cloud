@@ -6,7 +6,7 @@ import {
 	removeSync
 } from 'fs-extra'
 
-export const routePublic = server => {
+export const routePublic = ({ server }) => {
 	server.route({
 		method: 'GET',
 		path: '/{param*}',
@@ -22,7 +22,9 @@ export const routePublic = server => {
 	return server
 }
 
-export const routeBuiltPost = (server, {
+export const routeBuiltPost = ({
+	logger,
+	server,
 	buildComplete
 }) => {
 	const route = 'bin/devices/builds'
@@ -59,17 +61,19 @@ export const routeBuiltPost = (server, {
 				const prebuildFilename = path.join(prebuildFolderPath,
 					`prebuild_${filename.substring('built_'.length)}`)
 
-				server.log(`removing prebuild`, { prebuildFilename })
+				logger.next([ `removing prebuild`, { prebuildFilename } ])
 				removeSync(prebuildFilename)
-				buildComplete.next({
+				const data = {
 					model,
 					iteration,
 					builtFilePath
-				})
+				}
+				logger.next([ 'BUILD COMPLETE!', data ])
+				buildComplete.next(data)
 			}
 			reply().statusCode = 201
 			if (selfUpdate) {
-				server.log('!!! UPDATE READY !!!')
+				logger.next('!!! UPDATE READY !!!')
 				process.exit()
 			}
 		}

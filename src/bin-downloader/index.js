@@ -38,7 +38,7 @@ export const getBuiltFilePath = (d, type) =>
 export const getPrebuildFilePath = (d, type) =>
 	`${getPrebuildFolder()}/prebuild_${getTarSuffix(d, type)}`
 
-const getLocalVersion = (d, prebuild = false) => {
+const getLocalVersion = (logger, d, prebuild = false) => {
 	const folder = prebuild
 		? prebuildFolder
 		: path.join(
@@ -46,30 +46,51 @@ const getLocalVersion = (d, prebuild = false) => {
 			staticFilesPublicUrl,
 			getBuiltFolder(d, 'app')
 		)
+	logger.next([ 'getting local version', { device: d, prebuild, folder } ])
 	return fsStat(folder)
 		.then(() => fsReaddir(folder))
 		.catch(err => {
 			if (err.code != 'ENOENT') {
 				throw err
 			}
+			else {
+				logger.next([ 'local version not found', {
+					device: d,
+					prebuild,
+					folder
+				} ])
+			}
 		})
 		.then(files => files
 			? files.find(f => f.indexOf(prebuild ? 'prebuild' : 'built') == 0)
 			: void 0
 		)
+		.then(tarFilename => {
+			logger.next([ 'local tar found', { device: d, prebuild, tarFilename }])
+			return tarFilename
+		})
 		.then(getVersionFromTarName)
 }
 
-export const getLocalPrebuildVersion = d => getLocalVersion(d, true)
-export const getLocalBuiltVersion = d => getLocalVersion(d)
+export const getLocalPrebuildVersion = (logger, d) => getLocalVersion(logger, d, true)
+export const getLocalBuiltVersion = getLocalVersion
 
-export const checkLocalVersion = (d, getLocalVersion) =>
-	getLocalVersion(d).then(local => local != d.app.version)
+export const checkLocalVersion = (logger, d, getLocalVersion) =>
+	getLocalVersion(logger, d).then(local => {
+		const buildNeeded = local != d.app.version
+		logger.next([ 'check local version', {
+			device: d,
+			local,
+			needed: d.app.version,
+			buildNeeded
+		} ])
+		return buildNeeded
+	})
 
-export const syncDevicePrebuild = d => {
-	return checkLocalVersion(d, getLocalBuiltVersion)
+export const syncDevicePrebuild = (logger, d) => {
+	return checkLocalVersion(logger, d, getLocalBuiltVersion)
 		.then(buildNeeded => buildNeeded
-			? checkLocalVersion(d, getLocalPrebuildVersion)
+			? checkLocalVersion(logger, d, getLocalPrebuildVersion)
 				.then(prebuidNeeded => ({
 					buildNeeded,
 					prebuidNeeded
@@ -79,11 +100,11 @@ export const syncDevicePrebuild = d => {
 				prebuidNeeded: false
 			})
 		.then(({ buildNeeded, prebuidNeeded }) => prebuidNeeded
-			? downloadDevicePrebuild(d).then(() => ({ buildNeeded }))
+			? downloadDevicePrebuild(logger, d).then(() => ({ buildNeeded }))
 			: { buildNeeded })
 }
 
-export const downloadDevicePrebuild = d =>
+export const downloadDevicePrebuild = (logger, d) =>
 	new Promise((resolve, reject) => {
 		const args = [
 			'sh',
@@ -95,6 +116,10 @@ export const downloadDevicePrebuild = d =>
 		if (d.app && d.app.version) {
 			args.push(d.app.version)
 		}
+		logger.next([ 'downloading device prebuild', {
+			device: d,
+			args
+		} ])
 		exec(args.join(' '), (err, stdout, stderr) => {
 			if (err) {
 				reject(err)
@@ -114,11 +139,13 @@ export const downloadDevicePrebuild = d =>
 	})
 
 export const createBinDownloader = ({
+	logger,
 	prebuildNeeded,
 	buildNeeded
 }) => {
 	ensureDirSync(prebuildFolder)
-	prebuildNeeded.subscribe(d => syncDevicePrebuild(d)
+	logger.next([ 'creating prebuild folder', { prebuildFolder }])
+	prebuildNeeded.subscribe(d => syncDevicePrebuild(logger, d)
 		.then(({ buildNeeded: isBuildNeeded }) => isBuildNeeded
 			? buildNeeded.next(d)
 			: void 0

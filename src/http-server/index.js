@@ -5,7 +5,7 @@ import { Server } from 'hapi'
 import Good from 'good'
 import Inert from 'inert'
 
-export const createHttpServer = port => {
+export const createHttpServer = ({ port }) => {
 	const server = new Server({
 		connections: {
 			routes: {
