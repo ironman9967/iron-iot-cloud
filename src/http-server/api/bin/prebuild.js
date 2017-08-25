@@ -78,7 +78,7 @@ export const createBinPrebuildApi = ({
 							deviceUpsert.next(d)
 						}
 						else {
-
+							selfUpdateReady.next()
 						}
 					}
 				}
