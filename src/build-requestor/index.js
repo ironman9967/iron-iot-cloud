@@ -1,7 +1,7 @@
 
 import rp from 'request-promise'
 
-export const createBuildRequester = ({ logger, buildNeeded }) =>
+export const createBuildRequestor = ({ logger, buildNeeded }) =>
 	Promise.resolve(buildNeeded.subscribe(d => {
 		const uri = `${process.env.ARMB_1_URI}/api/prebuild-ready`
 		logger.next([ 'posting available prebuild to builder', {

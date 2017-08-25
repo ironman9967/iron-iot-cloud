@@ -50,7 +50,7 @@ createBinDownloader({
 	prebuildNeeded,
 	buildNeeded
 })
-	.then(() => createBuildRequester({ logger, buildNeeded }))
+	.then(() => createBuildRequestor({ logger, buildNeeded }))
 	.then(() => createHttpServer({ logger, port }))
 	.then(server => {
 		logger.subscribe(arg => {
