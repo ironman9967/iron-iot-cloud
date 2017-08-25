@@ -36,6 +36,12 @@ const deviceUpsert = new Subject()
 const prebuildNeeded = new Subject()
 const buildNeeded = new Subject()
 const buildComplete = new Subject()
+const selfUpdateReady = new Subject()
+
+selfUpdateReady.subscribe(() => {
+	logger.next('!!! UPDATE READY !!!')
+	process.exit()
+})
 
 createBinDownloader({
 	logger,
@@ -57,7 +63,8 @@ createBinDownloader({
 		logger,
 		server,
 		deviceUpsert,
-		prebuildNeeded
+		prebuildNeeded,
+		selfUpdateReady
 	}))
 	.then(server => routePublic({
 		logger,

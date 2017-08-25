@@ -15,7 +15,8 @@ import {
 
 export const createBinPrebuildApi = ({
 	logger,
-	deviceUpsert
+	deviceUpsert,
+	selfUpdateReady
 }) => {
 	const apiRoute = 'api/bin/devices/prebuilds'
 
@@ -75,6 +76,9 @@ export const createBinPrebuildApi = ({
 							const d = { model, iteration }
 							logger.next([ 'prebuild ready', d ])
 							deviceUpsert.next(d)
+						}
+						else {
+
 						}
 					}
 				}

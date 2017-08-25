@@ -6,7 +6,8 @@ export const routeApi = ({
 	logger,
 	server,
 	deviceUpsert,
-	prebuildNeeded
+	prebuildNeeded,
+	selfUpdateReady
 }) => {
 	const { createRoute: binVersionsRoute } = createBinVersionsApi({
 		logger,
@@ -17,7 +18,8 @@ export const routeApi = ({
 
 	const { createRoute: binPrebuildRoute } = createBinPrebuildApi({
 		logger,
-		deviceUpsert
+		deviceUpsert,
+		selfUpdateReady
 	})
 	server.route(binPrebuildRoute())
 
