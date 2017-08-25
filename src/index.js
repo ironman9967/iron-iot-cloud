@@ -9,6 +9,8 @@ import {
 	getBuiltFilePath
 } from './bin-downloader'
 
+import { createBuildRequestor } from './build-requestor'
+
 import { createHttpServer } from './http-server'
 import { routeApi } from './http-server/api'
 import {
@@ -48,6 +50,7 @@ createBinDownloader({
 	prebuildNeeded,
 	buildNeeded
 })
+	.then(() => createBuildRequester({ logger, buildNeeded }))
 	.then(() => createHttpServer({ logger, port }))
 	.then(server => {
 		logger.subscribe(arg => {
