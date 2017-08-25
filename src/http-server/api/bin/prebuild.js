@@ -65,6 +65,12 @@ export const createBinPrebuildApi = ({
 					} = payload
 					if (ref_type == 'tag' && version.indexOf('v') == 0)  {
 						const [ ,, model, iteration ] = repo.split('-')
+						logger.next([ 'release posted', {
+							model,
+							iteration,
+							version,
+							repo
+						}])
 						if (model != 'cloud' && iteration) {
 							const d = { model, iteration }
 							logger.next([ 'prebuild ready', d ])
