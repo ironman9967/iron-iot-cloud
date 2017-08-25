@@ -1,7 +1,10 @@
 
 import rp from 'request-promise'
 
-import { getPrebuildFilePath } from '../bin-downloader'
+import {
+	getPrebuildFilePath,
+	getBuiltFilePath 
+} from '../bin-downloader'
 
 export const createBuildRequestor = ({ logger, buildNeeded }) =>
 	Promise.resolve(buildNeeded.subscribe(d => {
