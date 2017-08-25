@@ -1,6 +1,8 @@
 
 import rp from 'request-promise'
 
+import { getPrebuildFilePath } from '../bin-downloader'
+
 export const createBuildRequestor = ({ logger, buildNeeded }) =>
 	Promise.resolve(buildNeeded.subscribe(d => {
 		const uri = `${process.env.ARMB_1_URI}/api/prebuild-ready`
