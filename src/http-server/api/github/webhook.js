@@ -1,15 +1,19 @@
 
+import crypto from 'crypto'
+
 export const createGithubWebhookApi = ({
 	logger,
 	deviceUpsert,
 	selfUpdateReady
 }) => {
 	const parseTag = ({
-		payload,
+		req,
 		reply
 	}) => {
 		reply()
-		const { ref, ref_type } = payload
+		const signature = req.headers['X-Hub-Signature']
+		logger.next('X-Hub-Signature', { signature })
+		const { ref, ref_type } = req.payload
 		if (ref_type == 'tag' && ref.indexOf('v') == 0) {
 			const [ ,, model, iteration ] = repo.split('-')
 			logger.next([ 'release posted', {
@@ -38,10 +42,7 @@ export const createGithubWebhookApi = ({
 		createRoute:() => ({
 			method: 'POST',
 			path: '/api/github/webhook/{event}',
-			handler: ({ payload }, reply) => parseTag({
-				payload,
-				reply
-			})
+			handler: parseTag
 		})
 	}
 }
