@@ -22,10 +22,10 @@ import { name, version } from '../package.json'
 process.title = `${name}@${version}`
 
 const devices = [{
-// 	model: 'phub',
-// 	iteration: 1,
-// 	interpreter: { type: 'node', version: 'stable' }
-// }, {
+	model: 'phub',
+	iteration: 1,
+	interpreter: { type: 'node', version: 'stable' }
+}, {
 	model: 'armb',
 	iteration: 1,
 	interpreter: { type: 'node', version: 'stable' }
