@@ -43,7 +43,7 @@ export const createGithubWebhookApi = ({
 		createRoute:() => ({
 			method: 'POST',
 			path: '/api/github/webhook/{event}',
-			handler: parseTag
+			handler: (req, reply) => parseTag(req, reply)
 		})
 	}
 }
