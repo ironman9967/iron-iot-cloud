@@ -19,7 +19,7 @@ import {
 } from './http-server/static-files'
 
 import { name, version } from '../package.json'
-process.title = `${name}@${version.substring(1)}`
+process.title = `${name}@${version}`
 
 const devices = [{
 // 	model: 'phub',
