@@ -12,7 +12,7 @@ export const createGithubWebhookApi = ({
 	}) => {
 		reply()
 		const signature = req.headers['X-Hub-Signature']
-		logger.next('X-Hub-Signature', { signature })
+		logger.next('headers', { headers: req.headers })
 		const { ref, ref_type, repository } = req.payload
 		if (ref_type == 'tag' && ref.indexOf('v') == 0) {
 			const { name: repo } = repository
