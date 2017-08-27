@@ -20,7 +20,7 @@ export const createGithubWebhookApi = ({
 			logger.next([ 'release posted', {
 				model,
 				iteration,
-				version,
+				version: ref,
 				repo
 			}])
 			if (model != 'cloud' && iteration) {
