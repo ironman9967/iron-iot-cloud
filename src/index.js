@@ -42,7 +42,7 @@ const selfUpdateReady = new Subject()
 
 selfUpdateReady.subscribe(() => {
 	logger.next('!!! UPDATE READY !!!')
-	process.exit()
+	setTimeout(() => process.exit(), 5000)
 })
 
 createBinDownloader({
