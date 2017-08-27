@@ -1,5 +1,5 @@
 
-import crypto from 'crypto'
+import { createHmac } from 'crypto'
 
 export const createGithubWebhookApi = ({
 	logger,
@@ -7,13 +7,11 @@ export const createGithubWebhookApi = ({
 	selfUpdateReady
 }) => {
 	const parseTag = ({
-		req,
+		payload,
 		reply
 	}) => {
 		reply()
-		const signature = req.headers['x-hub-signature']
-		logger.next([ 'x-hub-signature', { signature } ])
-		const { ref, ref_type, repository } = req.payload
+		const { ref, ref_type, repository } = payload
 		if (ref_type == 'tag' && ref.indexOf('v') == 0) {
 			const { name: repo } = repository
 			const [ ,, model, iteration ] = repo.split('-')
@@ -39,11 +37,48 @@ export const createGithubWebhookApi = ({
 			}])
 		}
 	}
+
+	const checkSecret = ({
+		req,
+		reply
+	}) => {
+		const {
+			headers,
+			payload
+		} = req
+		const signature =
+			`sha1=${createHmac("sha1", process.env.GITHUB_WEBHOOK_SECRET)
+				.update(payload)
+				.digest("hex")}`
+		const reqSign = headers['x-hub-signature'] || null
+		if (reqSign != null && reqSign == signature) {
+			parseTag({
+				payload: JSON.parse(payload.toString()),
+				reply
+			})
+		}
+		else {
+			reply().statusCode = 401
+			const { info: { remoteAddress, remotePort } } = req
+			logger.next([ 'UNAUTHORIZED REQUEST REJECTED', {
+				signature,
+				reqSign,
+				remoteAddress,
+				remotePort
+			}])
+		}
+	}
+
 	return {
 		createRoute:() => ({
 			method: 'POST',
 			path: '/api/github/webhook/{event}',
-			handler: (req, reply) => parseTag({ req, reply })
+			config: {
+				payload: {
+					parse: false
+				}
+			},
+			handler: (req, reply) => checkSecret({ req, reply })
 		})
 	}
 }
