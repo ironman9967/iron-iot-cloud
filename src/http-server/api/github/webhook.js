@@ -20,11 +20,9 @@ export const createGithubWebhookApi = ({
 }) => {
 	const tagParsed = new Subject()
 	tagParsed.subscribe(({
-		payload: {
-			ref: version,
-			ref_type,
-			repository: { name: repo }
-		}
+		ref: version,
+		ref_type,
+		repository: { name: repo }
 	}) => {
 		const [ ,, model, iteration ] = repo.split('-')
 		logger.next([ 'release posted', {
