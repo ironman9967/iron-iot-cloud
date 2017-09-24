@@ -2,8 +2,9 @@
 import path from 'path'
 
 import { Server } from 'hapi'
-import Good from 'good'
 import Inert from 'inert'
+import Good from 'good'
+import h2o2 from 'h2o2'
 
 export const createHttpServer = ({ port }) => {
 	const server = new Server({
@@ -34,5 +35,6 @@ export const createHttpServer = ({ port }) => {
 				}
 			}
 		}))
+		.then(() => server.register({ register: h2o2 }))
 		.then(() => server)
 }

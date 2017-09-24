@@ -5,17 +5,9 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"build": "npm run dl-common && npm run babel",
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "npm run build && chmod +x ./common/scripts/start.sh && ./common/scripts/start.sh",
-		"start-local": "export GITHUB_API_URI=http://localhost:9956 && export CLOUD_URI=http://localhost:9967 && export ARMB_1_URI=http://localhost:9978 && export APP_PATH=$PWD && export GITHUB_WEBHOOK_SECRET=secret && npm start",
-		"babel": "rm -rf dist && babel src --out-dir dist && npm run make-public",
-		"dl-common": "rm -rf prep.sh && wget https://raw.githubusercontent.com/ironman9967/iron-iot-common/master/scripts/prep.sh && chmod +x prep.sh && ./prep.sh && rm -rf prep.sh",
-		"bump": "npm version $1",
-		"release": "chmod +x ./common/scripts/release.sh && ./common/scripts/release.sh v$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')",
-		"release-patch": "npm run bump -- patch && npm run release",
-		"release-minor": "npm run bump -- minor && npm run release",
-		"make-public": "rm -rf dist/http-server/public && mkdir dist/http-server/public"
+		"build": "rm -rf dist/ && babel src --out-dir dist/",
+		"start": "npm run build && node dist/index.js",
+		"docker": "npm run build && docker-compose down && docker-compose build && docker-compose up -d"
 	},
 	"repository": {
 		"type": "git",
@@ -29,21 +21,21 @@
 	},
 	"homepage": "https://github.com/ironman9967/iron-iot-cloud#readme",
 	"devDependencies": {
-		"babel-cli": "^6.24.1",
-		"babel-plugin-transform-object-rest-spread": "^6.23.0",
+		"babel-cli": "^6.26.0",
+		"babel-plugin-transform-async-generator-functions": "^6.24.1",
+		"babel-plugin-transform-object-rest-spread": "^6.26.0",
 		"babel-preset-env": "^1.6.0"
 	},
 	"dependencies": {
-		"@reactivex/rxjs": "^5.4.3",
-		"async": "^2.5.0",
-		"fs-extra": "^4.0.1",
-		"good": "^7.2.0",
+		"create-subject-with-filter": "0.0.5",
+		"good": "^7.3.0",
 		"good-console": "^6.4.0",
 		"good-squeeze": "^5.0.2",
+		"h2o2": "^6.0.0",
 		"hapi": "^16.5.2",
 		"inert": "^4.2.1",
-		"request": "^2.81.0",
-		"request-promise": "^4.2.1"
+		"redis": "^2.8.0",
+		"wreck": "^12.5.0"
 	},
 	"babel": {
 		"presets": [
