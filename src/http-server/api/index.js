@@ -42,7 +42,7 @@ export const routeApi = logger => servicesUpdate => ({
 				reply().statusCode = 404
 				return
 			}
-			const accept = `application/iron-iot-cloud.${api}-${srv.version}+json`
+			const accept = `application/iron-iot.${api}-${srv.version}+json`
 			if (accept == req.headers['accept-version']) {
 				if (!srv.connection.protocol) {
 					logger.next([
